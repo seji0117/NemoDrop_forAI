@@ -212,9 +212,9 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // [3. 합격 구역 (포인트 니모)]
+                // [3. 합격 구역 (포인트 니모) - 정확한 지점을 요구하므로 점 크기(0.02 라디안)로 변경]
                 ctx.beginPath();
-                ctx.arc(cx, cy, visRe, thetaNemo - nemoHalfAngle, thetaNemo + nemoHalfAngle);
+                ctx.arc(cx, cy, visRe, thetaNemo - 0.02, thetaNemo + 0.02);
                 ctx.strokeStyle = '#10b981'; 
                 ctx.lineWidth = 6;
                 ctx.stroke();
@@ -247,20 +247,18 @@
 
                     let centerTheta = Math.atan2(py, px);
 
+                    // 수정사항 1: 대기권 진입 시 파편화(선) 되지 않고 계속 위성(점)으로 표시
+                    let drawPx = cx + visCurR * Math.cos(centerTheta);
+                    let drawPy = cy + visCurR * Math.sin(centerTheta);
+                    
+                    ctx.beginPath();
+                    ctx.arc(drawPx, drawPy, 5, 0, 2 * Math.PI);
                     if (simState === "ATMOSPHERE") {
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, visCurR, centerTheta - arcSpanAngle/2, centerTheta + arcSpanAngle/2);
-                        ctx.strokeStyle = '#ef4444';
-                        ctx.lineWidth = 4;
-                        ctx.stroke();
+                        ctx.fillStyle = '#ef4444'; // 대기권에서는 붉은색 점
                     } else {
-                        let drawPx = cx + visCurR * Math.cos(centerTheta);
-                        let drawPy = cy + visCurR * Math.sin(centerTheta);
-                        ctx.beginPath();
-                        ctx.arc(drawPx, drawPy, 5, 0, 2 * Math.PI);
                         ctx.fillStyle = simState === "DEORBIT" ? '#f59e0b' : '#3b82f6';
-                        ctx.fill();
                     }
+                    ctx.fill();
                 }
             }
 
@@ -387,16 +385,17 @@
                 let angularDiff = Math.abs(landingTheta - thetaNemo);
                 if (angularDiff > Math.PI) angularDiff = 2 * Math.PI - angularDiff;
 
-                let totalArcInside = (angularDiff + arcSpanAngle/2 <= nemoHalfAngle);
+                // 수정사항 2: 범위가 아닌 정확히(시뮬레이션 오차 0.02 라디안 허용) 맞췄는지 검사
+                let isExactHit = (angularDiff <= 0.02);
 
-                if (totalArcInside) {
+                if (isExactHit) {
                     resultTitle.innerText = "SUCCESS 🎯";
                     resultTitle.className = "text-5xl font-black tracking-wider text-emerald-400";
-                    resultDesc.innerText = `인공위성 낙하 성공! ${currentSat.name}의 파편 (${(Lfinal/1000).toFixed(0)}km)이 모두 포인트 니모 범위 안에 들어갔습니다.`;
+                    resultDesc.innerText = `인공위성 낙하 성공! ${currentSat.name}가 파편화되지 않고 정확히 포인트 니모를 타격했습니다.`;
                 } else {
                     resultTitle.innerText = "MISSION FAIL 💥";
                     resultTitle.className = "text-5xl font-black tracking-wider text-red-500";
-                    resultDesc.innerText = `인공위성 낙하 실패! 대기권에 진입했으나 파편이 포인트 니모 범위를 벗어났습니다. 감속량(Δv)을 조절해 보세요.`;
+                    resultDesc.innerText = `인공위성 낙하 실패! 대기권에 진입했으나 포인트 니모를 정확히 맞추지 못했습니다. 감속량(Δv)을 조절해 보세요.`;
                 }
             }
 
