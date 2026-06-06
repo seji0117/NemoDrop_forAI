@@ -274,14 +274,19 @@
 
                     if (simState === "ORBITING") {
                         let omega = Math.sqrt(mu / (r0 * r0 * r0));
-                        let currentTheta = currentSat.burnTheta - omega * (currentSat.life - simTime);
+                        
+                        // [수정된 부분] currentSat.life 수치만큼 시각적으로 궤도를 충분히 회전(공전)하도록 시간 스케일링
+                        let orbitPeriod = 2 * Math.PI / omega;
+                        let totalOrbitTime = orbitPeriod * currentSat.life; 
+                        
+                        let currentTheta = currentSat.burnTheta - omega * (totalOrbitTime - simTime);
                         
                         px = r0 * Math.cos(currentTheta);
                         py = r0 * Math.sin(currentTheta);
                         vx = -v0 * Math.sin(currentTheta);
                         vy = v0 * Math.cos(currentTheta);
 
-                        if (simTime >= currentSat.life) {
+                        if (simTime >= totalOrbitTime) {
                             simState = "DEORBIT";
                             deorbitTime = 0;
                             let vMag = Math.sqrt(vx*vx + vy*vy);
