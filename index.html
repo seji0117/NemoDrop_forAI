@@ -38,6 +38,7 @@
             <div class="flex justify-between"><span class="text-gray-400">항력 계수 (Cd):</span><span id="specCd" class="font-mono text-blue-300">-</span></div>
             <div class="flex justify-between"><span class="text-gray-400">구동 수명 (τ_life):</span><span id="specLife" class="font-mono text-blue-300">-</span></div>
             <div class="flex justify-between"><span class="text-gray-400">파편화 계수 (k_break):</span><span id="specK" class="font-mono text-emerald-400">-</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">기동 시작 각도(rad):</span><span id="specBurnTheta" class="font-mono text-amber-400">-</span></div>
         </div>
 
         <div>
@@ -170,6 +171,7 @@
                 document.getElementById('specCd').innerText = currentSat.Cd;
                 document.getElementById('specLife').innerText = currentSat.life + "주기";
                 document.getElementById('specK').innerText = currentSat.k_break.toLocaleString();
+                document.getElementById('specBurnTheta').innerText = currentSat.burnTheta.toFixed(4);
                 updateSliderValue();
             }
 
