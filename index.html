@@ -45,7 +45,7 @@
                 <label>2. 역추진 감속량 (Δv)</label>
                 <span id="dvValue" class="text-blue-400 font-mono font-bold">150 m/s</span>
             </div>
-            <input type="number" id="dvSlider" min="10" max="1000" value="150" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-sm font-mono text-white focus:outline-none focus:border-blue-500">
+            <input type="number" id="dvSlider" min="10" max="1000" step="any" value="150" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-sm font-mono text-white focus:outline-none focus:border-blue-500">
         </div>
 
         <div class="flex gap-2 mt-auto">
@@ -106,7 +106,7 @@
 
             // 3. UI 요소 매핑
             const satSelect = document.getElementById('satSelect');
-            const dvSlider = document.getElementById('dvSlider'); // id를 그대로 유지하여 기존 JS 호환
+            const dvSlider = document.getElementById('dvSlider'); 
             const dvValue = document.getElementById('dvValue');
             const startBtn = document.getElementById('startBtn');
             const resetBtn = document.getElementById('resetBtn');
